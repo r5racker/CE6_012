@@ -49,9 +49,22 @@ class VigenereCipher:
         print("Keys : ", keysRetrived)
 
 
-VC = VigenereCipher("pascal", ord("a"))
-#plainText = "sheislistening"
-plainText = "TheHitchhikersGuidetotheGalaxyisthefirstofsixbooksintheHitchhikersGuidetotheGalaxycomedysciencefictiontrilogybyDouglasAdamsThenovelisanadaptationofthefirstfourpartsofAdamssradioseriesofthesamenameThenovelwasfirstpublishedinLondononOctoberItsoldcopiesinthefirstthreemonths"
-cipher = VC.encrypt(plainText)
-print(cipher)
-VC.analyse(cipher)
+option = input("Do you want to try it yourself or see ready example? Y/N : ")
+if option == "N":
+    plainText = "TheHitchhikersGuidetotheGalaxyisthefirstofsixbooksintheHitchhikersGuidetotheGalaxycomedysciencefictiontrilogybyDouglasAdamsThenovelisanadaptationofthefirstfourpartsofAdamssradioseriesofthesamenameThenovelwasfirstpublishedinLondononOctoberItsoldcopiesinthefirstthreemonths"
+    key = "pascal"
+    VC = VigenereCipher(key, ord("a"))
+    cipher = VC.encrypt(plainText)
+    print("Plain text : ", plainText)
+    print("Key : ", key)
+    print("cipher : ", cipher)
+    VC.analyse(cipher)
+else:
+    plainText = input("enter plain text string : ")
+    key = input("enter key string : ")
+    VC = VigenereCipher(key, ord("a"))
+    cipher = VC.encrypt(plainText)
+    print("Plain text : ", plainText)
+    print("Key : ", key)
+    print("cipher : ", cipher)
+    VC.analyse(cipher)

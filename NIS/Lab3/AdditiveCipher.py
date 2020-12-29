@@ -84,7 +84,7 @@ class AdditiveCipher:
             LangY_Probability.append(LangY_Probability.pop(0))
         max_MI = max(MI_buffer)
         key = MI_buffer.index(max_MI)
-        print("MIC : ", max_MI, "Key", chr(self.base + key))
+        print("MIC : ", max_MI, "\nKey found :", chr(self.base + key))
         return key
 
     def getProb(self, LangYList):

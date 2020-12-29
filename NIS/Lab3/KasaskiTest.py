@@ -94,8 +94,11 @@ class KasaskiTest:
         key = "pascal"
         cipher = "ihwjierhzkkpgsywiottgvhpvadcxjxsljeqxrkvoqhipdozzsaptsthavcswicgrdvuafeedtzgglaapaczbevasnxefeeqxclkoyiranornbqfofvlsuaopmkvhpconglthafcdletsvizcoxvhpuijutqdujracisghaopmkurlsiguecxekqfewekcmpcaegtstngxewlakhichthwbwxszgdtclgpdzcofqcedbwtiehodfczeiwuiyihwhichtljrptmgptsh"
         length = self.findLength(cipher, 26)
-        print(length)
+        print("key was ", key)
+        print("cipher was : ", cipher)
+        print("predicted length : ", length)
 
 
-KT = KasaskiTest()
-KT.test()
+if __name__ == "__main__":
+    KT = KasaskiTest()
+    KT.test()

@@ -33,9 +33,11 @@ class AffineCipher:
 
 print(__name__)
 if(__name__ == "__main__"):
-    k1, k2, n = list(map(int, input().split()))
+    k1, k2, n = list(
+        map(int, input("key1 key2 numberOfCharacters : ").split()))
     ACrypter = AffineCipher(k1, k2, n)
-    for _ in range(int(input())):
-        plain = input()
+    for _ in range(int(input("Number of test cases : "))):
+        plain = input("Plain Text : ")
         cipher = ACrypter.encrypt(plain)
-        print(cipher, ACrypter.decrypt(cipher))
+        print("cipher : ", cipher)
+        print("deciphered Text : ", ACrypter.decrypt(cipher))

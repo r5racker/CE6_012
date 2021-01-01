@@ -69,7 +69,7 @@ class RSACryptography:
         '''
             Return : publicKey, privateKey
         '''
-        p, q = self._GetPrime(), self._GetPrime()
+        p, q = self.__GetPrime(), self.__GetPrime()
 
         while(p == q):
             q = __GetPrime()

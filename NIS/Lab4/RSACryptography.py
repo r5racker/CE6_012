@@ -1,78 +1,64 @@
 import random
-
-
-def PowNMod(base, power, mod):
-    res = 1     # Initialize result
-
-    # Update base if it is more
-    # than or equal to mod
-    base = base % mod
-    if (base == 0):
-        return 0
-    while (power > 0):
-        # If power is odd, multiply
-        # base with result
-        if ((power & 1) == 1):
-            res = (res * base) % mod
-        # power must be even now
-        power = power >> 1      # power = power/2
-        base = (base * base) % mod
-    return res
-
-
-class EuclidianExtended:
-    def __init__(self):
-        pass
-
-    def run(self, a, n):
-        r1 = n
-        r2 = a
-        t1 = 0
-        t2 = 1
-        while r2 > 0:
-            q = r1//r2
-            r = r1 % r2
-            r1 = r2
-            r2 = r
-            t = t1 - q*t2
-            t1 = t2
-            t2 = t
-        gcd = r1
-        inv = t1
-        if(gcd < 0):
-            gcd += n
-        if(inv < 0):
-            inv += n
-        if(gcd != 1):
-            inv = -1
-        return gcd, inv
-
-    def GetGcd(self, a, n):
-        gcd, _ = self.run(a, n)
-        return gcd
-
-    def GetInv(self, a, n):
-        _, inv = self.run(a, n)
-        return inv
-
-
+from Utilities.PowerNMode import PowNMod
+from Utilities.EuclidianExtended import EuclidianExtended
 class RSACryptography:
     def __init__(self):
         super().__init__()
         self.PublicKey, self._PrivateKey, self.N = self.__GenKeys()
 
-    def __GetPrime(self):
-        prime = int(input("Enter Prime number : "))
+    def millerRabinTest(self,n):
+        d=n-1
+        while (d % 2 == 0): 
+            d //= 2 
+        # Miller Rabin Test
+        a = 2 + random.randint(1, n - 4) 
+        #a^d % n 
+        x = PowNMod(a, d, n) 
+    
+        if (x == 1 or x == n - 1): 
+            return True 
+        while (d != n - 1): 
+            x = (x * x) % n 
+            d *= 2 
+    
+            if (x == 1): 
+                return False 
+            if (x == n - 1): 
+                return True 
+        return False
+
+    def isPrime(self,n,accuracyFactor):
+        
+        # Corner cases 
+        if (n <= 1 or n == 4): 
+            return False 
+        if (n <= 3): 
+            return True 
+        # Iterate given nber of 'k' times 
+        for _ in range(accuracyFactor): 
+            if (self.millerRabinTest( n) == False): 
+                return False 
+        return True
+
+    def __GetPrime(self,prime_len,accuracyFactor =3):
+        
+        #prime = int(input("Enter Prime number : "))
+        prime = random.randint(10**(prime_len-1),10**prime_len)
+
+        while not self.isPrime(prime,accuracyFactor):
+            prime = random.randint(10**(prime_len-1),10**prime_len)
+        print("prime",prime)
         return prime
 
     def __GenKeys(self):
         '''
             Return : publicKey, privateKey
         '''
-        p, q = self.__GetPrime(), self.__GetPrime()
+        prime_len = int(input("How many digit prime? : "))
+        p, q = self.__GetPrime(prime_len), self.__GetPrime(prime_len)
 
         while(p == q):
-            q = __GetPrime()
+            q = self.__GetPrime(prime_len)
 
         n = p*q
         phiN = (p-1)*(q-1)
@@ -83,15 +69,13 @@ class RSACryptography:
             e = random.randint(2, phiN - 1)
         # private key
         d = EE.GetInv(e, phiN)  # d := (e^-1 MOD phiN)
+        #print("keys",e,d,n)
         return e, d, n
 
     def Encrypt(self, plainText):
         base = ord('a')
-        cipherText = ""
         cipherList = []
         for pChar in plainText:
-            print(pChar)
-
             M = ord(pChar) - base
             # pow(M, self.publicKey) % self.N  # power & mod
             cipherChar = PowNMod(M, self.PublicKey, self.N)
@@ -107,6 +91,7 @@ class RSACryptography:
             C = cChar
             # pow(C, self.privateKey) % self.N  # power & mod
             plainChar = PowNMod(C, self._PrivateKey, self.N)
+            #print(base+plainChar,"N:",self.N)
             plainText += chr(base+plainChar)
         return plainText
 

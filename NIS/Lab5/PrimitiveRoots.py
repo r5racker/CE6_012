@@ -4,22 +4,24 @@ class PrimitiveRoots:
         EE = EuclidianExtended()
         #phi_p = self.phi(p)
         phi_p = 0
-        empty_set = set()
+        #empty_set = set()
         sub_group_orders = []
         for a in range(p):
             if(EE.GetGcd(a,p) == 1):
                 #calculating co-primes
                 phi_p += 1
                 #print(f"a={a}")
-                temp_set = set()
+                temp_list = []
                 for i in range(p):
                     temp = PowNMod(a,i,p)
                     #print(f"\ttemp={temp}")
-                    if temp_set.intersection({temp}) ==  empty_set:
-                        temp_set.add(temp)
+                    if temp not in temp_list:
+                        #print(f"temp {a} {i}",temp)
+                        temp_list.append(temp)
                     else:
                         break
-                sub_group_orders.append((a,len(temp_set)))
+                sub_group_orders.append((a,len(temp_list)))
+                print(a)
             else:
                 continue
         primitive_roots = [a for (a,o) in sub_group_orders if(o == phi_p) ]

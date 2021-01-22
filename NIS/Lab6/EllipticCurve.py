@@ -28,7 +28,7 @@ class EllipticCurve:
                         root = sqrt(w)
                     point_list.append((x,int(root%self.p)))
                     point_list.append((x,int((-root)%self.p)))
-                if(PowNMod(w,(self.p-1)//2,self.p) == -1 ):
+                if(PowNMod(w,(self.p-1)//2,self.p) == p-1 ):
                     print("No solution Possible for x = {0}".format(x))
                 x+=1
             return point_list

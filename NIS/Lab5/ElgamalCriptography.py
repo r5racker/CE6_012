@@ -1,4 +1,4 @@
-from Utilities import PrimeNumbers,PowNMod,EuclidianExtended
+from MyUtilities import PrimeNumbers,PowNMod,EuclidianExtended
 from PrimitiveRoots import PrimitiveRoots
 import random
 import time
@@ -15,9 +15,11 @@ class ElgamalCriptography:
         PR = PrimitiveRoots()
         start_time = time.time()
         self.primitive_roots,self.coprime_list = PR.getPrimitiveRoots(self.p)
+        print("primitive Roots:")
+        print(self.primitive_roots)
         end_time = time.time()
         print("_____________")
-        print(f"time taken in primitive test : {end_time - start_time}")
+        print("time taken in primitive root generation (sec): %1.3f"%(end_time - start_time))
         temp_index = random.randint(0,len(self.primitive_roots))
         e_1 = self.primitive_roots[temp_index]
         temp_index = random.randint(0,len(self.coprime_list))
@@ -56,7 +58,6 @@ class ElgamalCriptography:
     def test(self):    
         plain_text = "Hello World"
         cipher = self.encrypt(plain_text)
-        print("stage2")
         decrypted_text = self.decrypt(cipher)
         print(f"plain Text : {plain_text}")
         print(f"Public Key : {self.publiC_key}")

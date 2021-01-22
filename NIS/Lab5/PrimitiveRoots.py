@@ -1,4 +1,4 @@
-from Utilities import EuclidianExtended, PowNMod, PrimeNumbers
+from MyUtilities import EuclidianExtended, PowNMod, PrimeNumbers
 class PrimitiveRoots:
     def getPrimitiveRoots(self,p):
         EE = EuclidianExtended()
@@ -21,7 +21,7 @@ class PrimitiveRoots:
                     else:
                         break
                 sub_group_orders.append((a,len(temp_list)))
-                print(a)
+                #print(a)
             else:
                 continue
         primitive_roots = [a for (a,o) in sub_group_orders if(o == phi_p) ]

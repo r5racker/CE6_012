@@ -14,5 +14,3 @@ def PowNMod(base, power, mod):
         power = power >> 1      # power = power/2
         base = (base * base) % mod
     return res
-if __name__ == "__main__":
-    print(PowNMod(441,3,11))

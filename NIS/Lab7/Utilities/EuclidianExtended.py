@@ -43,10 +43,8 @@ class EuclidianExtended:
 
 if(__name__ == "__main__"):
     EExtended = EuclidianExtended()
-    gcd, inv = EExtended.run(10,11)
-    print(inv)
-    # for _ in range(int(input("Number of Test Cases: "))):
-    #     a, n = list(map(int, input("a n : ").split()))
-    #     gcd, inv = EExtended.run(a, n)
-    #     print("gcd: ", gcd, "inverse: ", inv)
-    #     print("_____________")
+    for _ in range(int(input("Number of Test Cases: "))):
+        a, n = list(map(int, input("a n : ").split()))
+        gcd, inv = EExtended.run(a, n)
+        print("gcd: ", gcd, "inverse: ", inv)
+        print("_____________")

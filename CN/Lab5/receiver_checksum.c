@@ -21,7 +21,7 @@ int main()
 	int length = FRAME_LENGTH + 1;
     char *buffer,check_sum;
     buffer = (char*)malloc((length+1) * sizeof(char));
-	buffer[length]='\n';
+	buffer[length]='\0';
 	// Open file 
 	fptr = fopen("frames_file.txt", "r"); 
 	if (fptr == NULL) 
@@ -41,9 +41,10 @@ int main()
 	
 	while (count != 0)
 	{
-		printf("Frame :%s\n",buffer);
+		printf("Frame :%s\t",buffer);
 		check_sum = calculateChecksum(buffer,count,length);
-		//printf("%d",check_sum);
+		buffer[count-1]='\0';
+		printf("Retrived Data: %s\n",buffer);
         if(check_sum == 0){
             fwrite(buffer,sizeof(char),count-1,output_stream);
         }else{
@@ -51,7 +52,7 @@ int main()
             strcpy(buffer,"ERROR");
             fwrite(buffer,sizeof(char),count-1,output_stream);
         }
-		strcpy(buffer,"     \n");
+		strcpy(buffer,"     ");
 		count = fread(buffer, sizeof(char), length , fptr);
 	}
 

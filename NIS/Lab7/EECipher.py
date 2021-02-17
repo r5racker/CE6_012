@@ -106,8 +106,11 @@ class ECPoint:
             return self.multiplyScalar(scalar//2) + self.multiplyScalar(scalar//2)
 
     def __str__(self):
-        return "({},{}) EE_{}({},{})".format(self.x,self.y,self.ECurve.p,self.ECurve.a,self.ECurve.b)
-    def test(self):
+        return "({},{}) w.r.t. EC_{}({},{})".format(self.x,self.y,self.ECurve.p,self.ECurve.a,self.ECurve.b)
+    @staticmethod
+    def test():
+        print("\n####################")
+        print("Testing Elliptic Curve Point addition and scalar multiplication")
         a=2
         b=3
         p=13
@@ -115,12 +118,8 @@ class ECPoint:
         p_2 = ECPoint(10,6,a,b,p)
         print(p_1)
         print(p_2)
-        print(p_1+p_2)
-        print(p_1.multiplyScalar(2))
-        p_2 = self.ECurve.getRandomPoint()
-        print(self)
-        print(p_2)
-        print(self + p_2)
+        print("Addition of p_1 and p_2 ",p_1+p_2)
+        print("scalar Multiplication p_1*2 := ",p_1.multiplyScalar(2))
 
 class ECCipher:
     def __init__(self,a,b,p):
@@ -154,8 +153,9 @@ class ECCipher:
         self.d = 4
         self.e_2 = self.e_1.multiplyScalar(self.d)
         self.testing = True
-        print("\n##############\n")
-        print("e1: ",self.e_1,"e2: ",self.e_2)
+        print("\n##############\nTesting ECCipher")
+        print("e1: ",self.e_1,"\ne2: ",self.e_2)
+        print("d = {0}".format(self.d))
         plainPoint = ECPoint(12,5,a,b,p)
         print("plain point: ",plainPoint)
         cipherPoints = self.encrypt(plainPoint)
@@ -163,4 +163,5 @@ class ECCipher:
         decipheredPoint = self.decrypt(cipherPoints[0],cipherPoints[1])
         print("deciphered point",decipheredPoint,"\n")
 if __name__ == "__main__":
+    ECPoint.test()
     ECCipher(1,1,13).test()

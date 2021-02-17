@@ -162,5 +162,5 @@ class ECCipher:
         print("ciphered point: ",cipherPoints[0],cipherPoints[1])
         decipheredPoint = self.decrypt(cipherPoints[0],cipherPoints[1])
         print("deciphered point",decipheredPoint,"\n")
-
-ECCipher(1,1,13).test()
+if __name__ == "__main__":
+    ECCipher(1,1,13).test()

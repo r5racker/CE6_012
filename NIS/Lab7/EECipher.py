@@ -164,21 +164,21 @@ class ECCipher:
         decipheredPoint = self.decrypt(cipherPoints[0],cipherPoints[1])
         print("deciphered point",decipheredPoint,"\n")
         
-        a,b,p=2,3,67
-        #self = ECCipher(a,b,p)
-        self.e_1 = ECPoint(2,22,a,b,p)
-        self.d = 4
-        self.e_2 = self.e_1.multiplyScalar(self.d)
-        self.testing = True
-        print("\n##\nTest-2")
-        print("e1: ",self.e_1,"\ne2: ",self.e_2)
-        print("d = {0}".format(self.d))
-        plainPoint = ECPoint(24,26,a,b,p)
-        print("plain point: ",plainPoint)
-        cipherPoints = self.encrypt(plainPoint)
-        print("ciphered point: ",cipherPoints[0],cipherPoints[1])
-        decipheredPoint = self.decrypt(cipherPoints[0],cipherPoints[1])
-        print("deciphered point",decipheredPoint,"\n")
+        # a,b,p=2,3,67
+        # #self = ECCipher(a,b,p)
+        # self.e_1 = ECPoint(2,22,a,b,p)
+        # self.d = 4
+        # self.e_2 = self.e_1.multiplyScalar(self.d)
+        # self.testing = True
+        # print("\n##\nTest-2")
+        # print("e1: ",self.e_1,"\ne2: ",self.e_2)
+        # print("d = {0}".format(self.d))
+        # plainPoint = ECPoint(24,26,a,b,p)
+        # print("plain point: ",plainPoint)
+        # cipherPoints = self.encrypt(plainPoint)
+        # print("ciphered point: ",cipherPoints[0],cipherPoints[1])
+        # decipheredPoint = self.decrypt(cipherPoints[0],cipherPoints[1])
+        # print("deciphered point",decipheredPoint,"\n")
 
 if __name__ == "__main__":
     ECPoint.test()

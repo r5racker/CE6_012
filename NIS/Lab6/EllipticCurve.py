@@ -29,8 +29,10 @@ class EllipticCurve:
                     point_list.append((x,int(root%self.p)))
                     point_list.append((x,int((-root)%self.p)))
                 if(PowNMod(w,(self.p-1)//2,self.p) == p-1 ):
-                    print("No solution Possible for x = {0}".format(x))
+                    #print("No solution Possible for: x = {0}".format(x))
+                    pass
                 x+=1
+            print("")
             return point_list
         else:
             return []
@@ -44,7 +46,8 @@ if __name__ == "__main__":
     b=3
     p=67
     ec = EllipticCurve(a,b,p)
-    print(ec.getPoints())
+    
+    print("Points on Curve",ec.getPoints())
     # a=1
     # b=1
     # p=13

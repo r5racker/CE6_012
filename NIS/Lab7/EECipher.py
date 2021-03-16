@@ -51,8 +51,9 @@ class EllipticCurve:
 
     def getSlope(self,p_1,p_2,prime):
         EE = EuclidianExtended()
-        if( p_1[0]!=p_2[0] and p_1[1]!=p_2[1] ):
-            delta_x=p_2[0]-p_1[0]
+        delta_x=p_2[0]-p_1[0]
+        
+        if( p_1[0]!=p_2[0] and p_1[1]!=p_2[1] and EE.GetGcd(delta_x,prime) == 1 ):
             return (p_2[1]-p_1[1])*EE.GetInv(delta_x,prime)%prime
         elif(p_1[0]==p_2[0] and p_1[1]==-p_2[1]):
             return float("inf")
@@ -84,7 +85,7 @@ class ECPoint:
 
     def __add__(self,p_2):
         slope = self.ECurve.getSlope((self.x,self.y),(p_2.x,p_2.y),self.ECurve.p)
-        #print("slope:",slope)
+        print("slope:",slope)
         x3 = (pow(slope,2) - self.x - p_2.x)%self.ECurve.p
         y3 = (slope*(self.x-x3) - self.y)%self.ECurve.p
         return ECPoint(x3,y3,self.ECurve.a,self.ECurve.b,self.ECurve.p)
@@ -145,41 +146,44 @@ class ECCipher:
     def decrypt(self,c_1,c_2):
         M = c_2 - c_1.multiplyScalar(self.d)
         return M
-
-    def test(self):
+    @staticmethod
+    def test():
         a,b,p=1,1,13
-        #self = ECCipher(a,b,p)
-        self.e_1 = ECPoint(1,4,a,b,p)
-        self.d = 4
-        self.e_2 = self.e_1.multiplyScalar(self.d)
-        self.testing = True
+        ecCipher = ECCipher(a,b,p)
+        ecCipher.e_1 = ECPoint(1,4,a,b,p)
+        ecCipher.d = 4
+        ecCipher.e_2 = ecCipher.e_1.multiplyScalar(ecCipher.d)
+        ecCipher.testing = True
         print("\n##############\nTesting ECCipher")
-        print("#\nTest-1")
-        print("e1: ",self.e_1,"\ne2: ",self.e_2)
-        print("d = {0}".format(self.d))
+        #print("#\nTest-1")
+        print("e1: ",ecCipher.e_1,"\ne2: ",ecCipher.e_2)
+        print("d = {0}".format(ecCipher.d))
         plainPoint = ECPoint(12,5,a,b,p)
         print("plain point: ",plainPoint)
-        cipherPoints = self.encrypt(plainPoint)
+        cipherPoints = ecCipher.encrypt(plainPoint)
         print("ciphered point: ",cipherPoints[0],cipherPoints[1])
-        decipheredPoint = self.decrypt(cipherPoints[0],cipherPoints[1])
+        decipheredPoint = ecCipher.decrypt(cipherPoints[0],cipherPoints[1])
         print("deciphered point",decipheredPoint,"\n")
         
-        # a,b,p=2,3,67
-        # #self = ECCipher(a,b,p)
-        # self.e_1 = ECPoint(2,22,a,b,p)
-        # self.d = 4
-        # self.e_2 = self.e_1.multiplyScalar(self.d)
-        # self.testing = True
-        # print("\n##\nTest-2")
-        # print("e1: ",self.e_1,"\ne2: ",self.e_2)
-        # print("d = {0}".format(self.d))
-        # plainPoint = ECPoint(24,26,a,b,p)
-        # print("plain point: ",plainPoint)
-        # cipherPoints = self.encrypt(plainPoint)
-        # print("ciphered point: ",cipherPoints[0],cipherPoints[1])
-        # decipheredPoint = self.decrypt(cipherPoints[0],cipherPoints[1])
-        # print("deciphered point",decipheredPoint,"\n")
+        a,b,p=2,3,67
+        ecCipher2 = ECCipher(a,b,p)
+        ecCipher2.e_1 = ECPoint(2,22,a,b,p)
+        ecCipher2.d = 4
+        ecCipher2.e_2 = ecCipher2.e_1.multiplyScalar(ecCipher2.d)
+        ecCipher2.testing = True
+        print("\n##\nTest-2")
+        print(ecCipher2.ECurve.getPoints())
+        print("e1: ",ecCipher2.e_1,"\ne2: ",ecCipher2.e_2)
+        print("d = {0}".format(ecCipher2.d))
+        plainPoint = ECPoint(24,26,a,b,p)
+        print("plain point: ",plainPoint)
+        cipherPoints = ecCipher2.encrypt(plainPoint)
+        print("ciphered point: ",cipherPoints[0],cipherPoints[1])
+        decipheredPoint = ecCipher2.decrypt(cipherPoints[0],cipherPoints[1])
+        print("deciphered point",decipheredPoint,"\n")
+
+        print(ECPoint(24,26,a,b,p)+ECPoint(13,45,a,b,p))
 
 if __name__ == "__main__":
     ECPoint.test()
-    ECCipher(1,1,13).test()
+    ECCipher.test()

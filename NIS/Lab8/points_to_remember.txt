@@ -1,0 +1,7 @@
+#Block Size
+    BLOCK SIZE - 64 bits Plain Text
+    No. of Rounds - 16 Rounds
+    Key Size - 64 bits
+    Sub Key Size - 48 bits
+    No. of Sub Keys - 16 Sub Keys
+    Cipher Text - 64 bits

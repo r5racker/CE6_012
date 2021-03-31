@@ -8,10 +8,10 @@ class EllipticCurve:
         self.a = a
         self.b = b
         self.p = p
-        self.isParametersValid() 
+        self.isParametersValid()
         self.point_list = []
     def isParametersValid(self):
-        #checks validity of a and b 
+        #checks validity of a and b
         if ( 4*self.a**3+27*self.b**2 == 0):
             print("inappropriate combination of a and b please change it")
             return False
@@ -53,7 +53,8 @@ class EllipticCurve:
         EE = EuclidianExtended()
         delta_x=p_2[0]-p_1[0]
         
-        if( p_1[0]!=p_2[0] and p_1[1]!=p_2[1] and EE.GetGcd(abs(delta_x),prime) == 1 ):            
+        if( p_1[0]!=p_2[0] and p_1[1]!=p_2[1] and EE.GetGcd(abs(delta_x),prime) == 1 ):
+            
             if delta_x>0:
                 return (p_2[1]-p_1[1])*EE.GetInv(delta_x,prime)%prime
             else:
@@ -65,6 +66,9 @@ class EllipticCurve:
             denomInverse = EE.GetInv(2*p_1[1],prime)
             #print("in getSlope else: ",( numerator*denomInverse )%prime)
             return ( numerator*denomInverse )%prime
+
+    def get_order(self):
+        return self.p
     def test(self):
         a=2
         b=3
@@ -78,7 +82,6 @@ class EllipticCurve:
         print(ec.getPoints())
         print(ec.getSlope((35,66),(42,26),67))
         print(ec.getSlope((35,66),(35,66),67))
-    
 
 class ECPoint:
     def __init__(self,x,y,a,b,p):
@@ -88,7 +91,7 @@ class ECPoint:
 
     def __add__(self,p_2):
         slope = self.ECurve.getSlope((self.x,self.y),(p_2.x,p_2.y),self.ECurve.p)
-        print("slope:",slope)
+        #print("slope:",slope)
         x3 = (pow(slope,2) - self.x - p_2.x)%self.ECurve.p
         y3 = (slope*(self.x-x3) - self.y)%self.ECurve.p
         return ECPoint(x3,y3,self.ECurve.a,self.ECurve.b,self.ECurve.p)
@@ -98,34 +101,61 @@ class ECPoint:
         return self + p_2
 
     def multiplyScalar(self,scalar):
-        #print(scalar)
+        scalar = int(scalar)
         if(scalar <= 1):
             return self
         if(scalar & 1 == 1):
             #odd
-            #print(self.multiplyScalar((scalar-1)//2) , self.multiplyScalar( (scalar-1)//2 + 1))
-            return self.multiplyScalar((scalar-1)//2) + self.multiplyScalar( (scalar-1)//2 + 1)
+            res1 = self.multiplyScalar((scalar-1)//2)
+            res2 = self.multiplyScalar( (scalar-1)//2 + 1)
+            res = res1 + res2
+            # print("Multiplying with odd scalar",scalar,"->",(scalar-1)//2,res1,(scalar-1)//2+1,res2)
+            # print(res)
+            return res
         else:
-            #print(self.multiplyScalar((scalar)//2) , self.multiplyScalar( (scalar)//2 + 1))
-            return self.multiplyScalar(scalar//2) + self.multiplyScalar(scalar//2)
+            
+            res = self.multiplyScalar(scalar//2) + self.multiplyScalar(scalar//2)
+            # print("Multiplying with even scalar",scalar,"->",(scalar)//2,(scalar)//2)
+            # print(res)
+            return res
+    
+    # def multiplyScalar_loop(self,scalar):
+    #     point = ECPoint(self.x,self.y,self.ECurve.a,self.ECurve.b,self.ECurve.p)
+    #     for i in range(1,scalar):
+    #         point = point+self
+    #         print(i,point)
+    #     return point
+
 
     def __str__(self):
         return "({},{}) w.r.t. EC_{}({},{})".format(self.x,self.y,self.ECurve.p,self.ECurve.a,self.ECurve.b)
     @staticmethod
     def test():
-        print("\n####################")
-        print("Testing Elliptic Curve Point addition and scalar multiplication")
-        a=2
-        b=3
-        p=13
-        p_1 = ECPoint(4,2,a,b,p)
-        p_2 = ECPoint(10,6,a,b,p)
-        print(p_1)
-        print(p_2)
-        print("Addition of p_1 and p_2 ",p_1+p_2)
-        print("scalar Multiplication p_1*2 := ",p_1.multiplyScalar(2))
+        # print("\n####################")
+        # print("Testing Elliptic Curve Point addition and scalar multiplication")
+        # a=2
+        # b=3
+        # p=13
+        # p_1 = ECPoint(4,2,a,b,p)
+        # p_2 = ECPoint(10,6,a,b,p)
+        # print(p_1)
+        # print(p_2)
+        # print("Addition of p_1 and p_2 ",p_1+p_2)
+        # print("scalar Multiplication p_1*2 := ",p_1.multiplyScalar(2))
 
-class ECCipher:
+        #case 2
+        a=2
+        b=2
+        p=17
+        p_1 = ECPoint(7,6,a,b,p)
+        p_2 = ECPoint(5,16,a,b,p)
+        # print(p_1.ECurve.getPoints())
+        # d=3
+        # e_2 = p_1.multiplyScalar(d)
+        # print(p_1)
+        # print("p1*d",e_2)
+        
+class ECC_DSS:
     def __init__(self,a,b,p):
         #private Key
         self.d = randint(2,p-2)
@@ -133,60 +163,61 @@ class ECCipher:
         self.ECurve = EllipticCurve(a,b,p)
         self.e_1 = self.ECurve.getRandomPoint()
         self.e_2 = self.e_1.multiplyScalar(self.d)    
+        self.q = self.ECurve.get_order()
         self.testing = False
         self.r = 1
 
-    def encrypt(self,M):
+    def set_e_1(self,x,y):
+        self.e_1 = ECPoint(x,y,self.ECurve.a,self.ECurve.b,self.ECurve.p)
+        self.e_2 = self.e_1.multiplyScalar(self.d)    
+
+    def sign(self,M):
         
         if(self.testing):
             r=self.r
         else:
-            r = randint(1,self.ECurve.p-2)
-        c_1 = self.e_1.multiplyScalar(r)
-        c_2 = M + self.e_2.multiplyScalar(r)
-        return [c_1,c_2]
-
-    def decrypt(self,c_1,c_2):
-        M = c_2 - c_1.multiplyScalar(self.d)
+            r = randint(1,self.q-2) #secret random number
+        ee = EuclidianExtended()
+        r_inv = ee.GetInv(r,self.q)
+        point1 = self.e_1.multiplyScalar(r)
+        s_1 = point1.x % self.q
+        s_2 = ( (self.hash(M)+self.d*s_1)*r_inv )%self.q
+        return (s_1,s_2)
+    def hash(self,M):
         return M
+
+    def is_valid(self,M,s_1,s_2):
+        validity = False
+        ee = EuclidianExtended()
+        s_2_inv = ee.GetInv(s_2,self.q)
+        print("s2_inv",s_2_inv)
+        t_1 = (self.hash(M)*s_2_inv)%self.q
+        t_2 = (s_2_inv*s_1)%self.q
+        print("t_1,t_2",t_1,t_2)
+        third_point = self.e_1.multiplyScalar(t_1) + self.e_2.multiplyScalar(t_2)
+        if third_point.x== s_1%self.q :
+            validity = True   
+        return validity
+
     @staticmethod
     def test():
-        a,b,p=1,1,13
-        ecCipher = ECCipher(a,b,p)
-        ecCipher.e_1 = ECPoint(1,4,a,b,p)
-        ecCipher.d = 4
-        ecCipher.e_2 = ecCipher.e_1.multiplyScalar(ecCipher.d)
-        ecCipher.testing = True
-        print("\n##############\nTesting ECCipher")
-        #print("#\nTest-1")
-        print("e1: ",ecCipher.e_1,"\ne2: ",ecCipher.e_2)
-        print("d = {0}".format(ecCipher.d))
-        plainPoint = ECPoint(12,5,a,b,p)
-        print("plain point: ",plainPoint)
-        cipherPoints = ecCipher.encrypt(plainPoint)
-        print("ciphered point: ",cipherPoints[0],cipherPoints[1])
-        decipheredPoint = ecCipher.decrypt(cipherPoints[0],cipherPoints[1])
-        print("deciphered point",decipheredPoint,"\n")
+        #case 1
+        # a,b,p=2,3,191
+        # ecc_dss = ECC_DSS(a,b,p)
+        # M=5
+        # s_1,s_2=ecc_dss.sign(M)
+        # print(ecc_dss.is_valid(M,s_1,s_2))
+        #case 2 from notes
+        a,b,p=2,2,17
+        ecc_dss = ECC_DSS(a,b,p)
+        ecc_dss.set_e_1(16,13)
+        M=45
+        s_1,s_2=ecc_dss.sign(M)
+        print("s1:",s_1,",s2:",s_2)
+        if(ecc_dss.is_valid(M,s_1,s_2)):
+            print("Message Valid")
         
-        a,b,p=2,3,67
-        ecCipher2 = ECCipher(a,b,p)
-        ecCipher2.e_1 = ECPoint(2,22,a,b,p)
-        ecCipher2.d = 4
-        ecCipher2.e_2 = ecCipher2.e_1.multiplyScalar(ecCipher2.d)
-        ecCipher2.testing = True
-        print("\n##\nTest-2")
-        print(ecCipher2.ECurve.getPoints())
-        print("e1: ",ecCipher2.e_1,"\ne2: ",ecCipher2.e_2)
-        print("d = {0}".format(ecCipher2.d))
-        plainPoint = ECPoint(24,26,a,b,p)
-        print("plain point: ",plainPoint)
-        cipherPoints = ecCipher2.encrypt(plainPoint)
-        print("ciphered point: ",cipherPoints[0],cipherPoints[1])
-        decipheredPoint = ecCipher2.decrypt(cipherPoints[0],cipherPoints[1])
-        print("deciphered point",decipheredPoint,"\n")
-
-        print(ECPoint(24,26,a,b,p)+ECPoint(13,45,a,b,p))
 
 if __name__ == "__main__":
-    ECPoint.test()
-    ECCipher.test()
+    #ECPoint.test()
+    ECC_DSS.test()
